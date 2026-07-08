@@ -1,0 +1,56 @@
+LIMITE_DE_TAREFAS: 5;
+
+ACESSO_AUTOMATICO: 1;
+USUARIO: usuario_exemplo;
+SENHA: senha_exemplo;
+
+ARQUIVO_BANCO_DE_DADOS: banco_de_dados.accdb;
+
+TAMANHO_DA_TELA: 1920,1080;
+
+URL_PARA_LOGIN: https%CL%//servidor.exemplo.local/Sistema/Login.aspx;
+URL_DE_DADOS: https%CL%//servidor.exemplo.local/Sistema/Consulta.aspx?id={}&ReadOnly=1;
+
+MAPAS: {
+    microrregiao: utils/poligonos/microrregioes_saude.geojson,
+    bairros: utils/poligonos/bairros.geojson
+};
+
+CAMINHO_DADOS: %V%CAMINHO_PRINCIPAL%/V%\dados;
+CAMINHO_METADADOS: %V%CAMINHO_DADOS%/V%\metadados\;
+CAMINHO_ALVOS: %V%CAMINHO_DADOS%/V%\alvos\;
+CAMINHO_BANCO_DE_DADOS: %V%CAMINHO_DADOS%/V%\%V%ARQUIVO_BANCO_DE_DADOS%/V%;
+
+ETIQUETAS_HTML: {
+    lblCodigo: span,                                # Código do registro
+    lblDataCriacao: span,                           # Data de criação
+    lblTitulo: span,                                # Título do registro
+    lblCategoria: span,                             # Categoria
+    lblResponsavel: span,                           # Responsável
+    txtLatitude: span,                              # Latitude
+    txtLongitude: span,                             # Longitude
+    txtCidade: span,                                # Cidade
+    txtEndereco: span,                              # Endereço
+    txtReferencia: span,                            # Referência
+    txtDestino: span,                               # Destino
+    txtOrigem: span,                                # Origem
+    txtDescricao: span,                             # Descrição
+    lblTipoRegistro: span,                          # Tipo do registro
+    lblPrioridade: span,                            # Prioridade
+    lblSituacao: span,                              # Situação
+    lblHistorico: span,                             # Histórico
+    lblHoraCriacao: span,                           # Hora de criação
+    lblHoraAtualizacao: span,                       # Hora da última atualização
+    lblHoraProcessamento: span,                     # Hora do processamento
+    lblHoraInicio: span,                            # Hora de início
+    lblHoraFim: span,                               # Hora de término
+    lblTempoTotal: span,                            # Tempo total
+    rptrObservacoes_ctl01_txtTexto: span,           # Observações
+    rptrAnotacoes_ctl01_txtTexto: span,             # Anotações
+    txtQuantidade: input,                           # Quantidade
+    rbTipoRegistro: c_input,                        # Tipo de registro
+    ddlCategoria: select,                           # Categoria
+    ddlStatus: select,                              # Status
+    ddlPrioridade: select,                          # Prioridade
+    localizacao: poly(txtLongitude,txtLatitude)
+}
