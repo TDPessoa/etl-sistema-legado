@@ -10,7 +10,7 @@ responsáveis por exibir o estado da execução.
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
-from utils.classes.DadosDeExecucao import *
+from utils.classes.DadosDeExecucao import DadosDeExecucao
 
 
 class Imagens:
