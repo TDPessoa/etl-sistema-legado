@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ca33b635-f26f-44a7-ad28-fd98fff7d939" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    <list default="true" id="ca33b635-f26f-44a7-ad28-fd98fff7d939" name="Changes" comment="refactor: replace wildcard imports in interface module">
+      <change beforePath="$PROJECT_DIR$/utils/funcoes.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/funcoes.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +40,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "feature/imports-cleanup",
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
@@ -60,6 +60,23 @@
       <option name="presentableId" value="Default" />
       <updated>1783105105945</updated>
     </task>
+    <task id="LOCAL-00001" summary="refactor: replace wildcard imports in main module">
+      <option name="closed" value="true" />
+      <created>1783540536429</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1783540536429</updated>
+    </task>
+    <task id="LOCAL-00002" summary="refactor: replace wildcard imports in interface module">
+      <option name="closed" value="true" />
+      <created>1783540773469</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1783540773469</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -67,10 +84,38 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="feature/imports-cleanup" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="refactor: replace wildcard imports in main module" />
+    <MESSAGE value="refactor: replace wildcard imports in interface module" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: replace wildcard imports in interface module" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/utils/classes/DadosDeExecucao.py</url>
+          <line>5</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
