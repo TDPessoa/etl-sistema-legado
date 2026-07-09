@@ -8,43 +8,53 @@ responsáveis por exibir o estado da execução.
 """
 
 import tkinter as tk
+from typing import Literal
 from tkinter import ttk
 from PIL import Image, ImageTk
 from utils.classes.DadosDeExecucao import DadosDeExecucao
+from utils.classes.Excecoes import ErroFalhaSQL
 
+Anchor = Literal[
+    "nw", "n", "ne",
+    "w", "center", "e",
+    "sw", "s", "se"
+]
 
 class Imagens:
-    """Cria e condiciona as imagens utilizadas na interface"""
+    """Carrega e prepara as imagens utilizadas pela interface gráfica."""
     def __init__(self):
-        self.LOGO: ImageTK.PhotoImage = self._condicionar_imagem(
+        self.LOGO: ImageTk.PhotoImage = self._condicionar_imagem(
             'utils/imagens/logo.png', 75)
-        self.PONTO_VERMELHO: ImageTK.PhotoImage = self._condicionar_imagem(
+        self.PONTO_VERMELHO: ImageTk.PhotoImage = self._condicionar_imagem(
             'utils/imagens/vermelho.png', 18)
-        self.PONTO_VERMELHO_GRANDE: ImageTK.PhotoImage = self._condicionar_imagem(
+        self.PONTO_VERMELHO_GRANDE: ImageTk.PhotoImage = self._condicionar_imagem(
             'utils/imagens/vermelho.png', 30)
-        self.PONTO_VERDE: ImageTK.PhotoImage = self._condicionar_imagem(
+        self.PONTO_VERDE: ImageTk.PhotoImage = self._condicionar_imagem(
             'utils/imagens/verde.png', 18)
-        self.PONTO_VERDE_GRANDE: ImageTK.PhotoImage = self._condicionar_imagem(
+        self.PONTO_VERDE_GRANDE: ImageTk.PhotoImage = self._condicionar_imagem(
             'utils/imagens/verde.png', 30)
-        self.PONTO_AZUL: ImageTK.PhotoImage = self._condicionar_imagem(
+        self.PONTO_AZUL: ImageTk.PhotoImage = self._condicionar_imagem(
             'utils/imagens/azul.png', 18)
-        self.PONTO_AZUL_GRANDE: ImageTK.PhotoImage = self._condicionar_imagem(
+        self.PONTO_AZUL_GRANDE: ImageTk.PhotoImage = self._condicionar_imagem(
             'utils/imagens/azul.png', 30)
-        self.PONTO_AMARELO: ImageTK.PhotoImage = self._condicionar_imagem(
+        self.PONTO_AMARELO: ImageTk.PhotoImage = self._condicionar_imagem(
             'utils/imagens/amarelo.png', 18)
-        self.PONTO_AMARELO_GRANDE: ImageTK.PhotoImage = self._condicionar_imagem(
+        self.PONTO_AMARELO_GRANDE: ImageTk.PhotoImage = self._condicionar_imagem(
             'utils/imagens/amarelo.png', 30)
 
-    @ staticmethod
+    @staticmethod
     def _condicionar_imagem(caminho: str, tamanho: int) -> ImageTk.PhotoImage:
-        """Gera e redimensiona a imagem passada"""
+        """Carrega, redimensiona e converte uma imagem para uso na interface."""
         imagem: Image = Image.open(caminho)
         pixels_x, pixels_y = tuple([int(tamanho / imagem.size[0] * x) for x in imagem.size])
         return ImageTk.PhotoImage(imagem.resize((pixels_x, pixels_y)))
 
 
 class InterfaceDaJanela:
-    """Cria, estrutura e controla as operações visuais da janela de execução"""
+    """
+    Cria e controla a janela principal responsável por acompanhar
+    a execução do pipeline ETL.
+    """
     def __init__(self):
         self._configurar_janela()
         self._IMAGENS: Imagens = Imagens()
@@ -89,37 +99,35 @@ class InterfaceDaJanela:
         self.permissao_para_coletar: bool = True
 
     def automatizado(self, permissao: bool) -> None:
-        """Define o estado de verdadeiro ou falso ao ponto
-        `ACESSO AUTOMATIZADO`"""
+        """Atualiza a interface para indicar se o acesso será automático ou manual."""
         if permissao:
             self._pontos_de_status[2].configure(image=self._IMAGENS.PONTO_VERDE)
         else:
             self._pontos_de_status[2].configure(image=self._IMAGENS.PONTO_VERMELHO)
 
     def iniciar_conexao(self) -> None:
-        """Define o estado de trabalho ao ponto `ACESSO AO BANCO DE DADOS`"""
+        """Atualiza a interface para indicar o início da conexão com o banco."""
         self._pontos_de_status[0].configure(image=self._IMAGENS.PONTO_AZUL)
         self.janela.update()
 
     def finalizar_conexao(self) -> None:
-        """Define o estado de concluído ao ponto `ACESSO AO BANCO DE DADOS`"""
+        """Atualiza a interface para indicar sucesso na conexão com o banco."""
         self._pontos_de_status[0].configure(image=self._IMAGENS.PONTO_VERDE)
         self.janela.update()
 
     def iniciar_identificacao(self) -> None:
-        """Define o estado de trabalho ao ponto `PÁGINAS IDENTIFICADAS`"""
+        """Atualiza a interface para indicar o início da obtenção de alvos."""
         self._pontos_de_status[1].configure(image=self._IMAGENS.PONTO_AZUL)
         self.janela.update()
 
     def finalizar_identificacao(self, total_paginas: int) -> None:
-        """Define o estado de concluído ao ponto `PÁGINAS IDENTIFICADAS`"""
+        """Atualiza a interface para indicar o sucesso na obtenção de alvos."""
         self._textos_variaveis[2].set(value=f'{total_paginas:05}')
         self._pontos_de_status[1].configure(image=self._IMAGENS.PONTO_VERDE)
         self.janela.update()
 
     def iniciar_login(self) -> None:
-        """Define o estado de trabalho ao ponto `ACESSO ADQUIRIDO` e
-        define uma mensagem acerca da possível demora"""
+        """Atualiza a interface para indicar o início das tentativas de autenticação."""
         self._pontos_de_status[3].configure(image=self._IMAGENS.PONTO_AZUL)
         self._textos_variaveis[11].set(
             "Esta etapa irá demorar para ser concluída se esta for a primeira execução desde a "
@@ -128,16 +136,14 @@ class InterfaceDaJanela:
         self.janela.update()
 
     def finalizar_login(self) -> None:
-        """Define o estado de concluído ao ponto `ACESSO ADQUIRIDO` e
-        remove e mensagem"""
+        """Atualiza a interface para indicar o sucesso na autenticação."""
         self._pontos_de_status[3].configure(image=self._IMAGENS.PONTO_VERDE)
         self._textos_variaveis[11].set("")
         self._mensagem_de_erro.configure(foreground="Red")
         self.janela.update()
 
     def iniciar_coleta(self, quantidade: int, limite: int) -> None:
-        """Cria o objeto DadosDeExecucao, atualiza as variáveis de texto e
-        define o estado de trabalho ao ponto `COLETA DE DADOS`"""
+        """Prepara variáveis e atualiza a interface para indicar o início da coleta de dados."""
         self.dados_de_execucao = DadosDeExecucao(quantidade, limite)
         self._textos_variaveis[3].set(value=self.dados_de_execucao.str_paginas_coletadas)
         self._textos_variaveis[4].set(value=self.dados_de_execucao.str_paginas_salvas)
@@ -147,20 +153,17 @@ class InterfaceDaJanela:
         self.janela.update()
 
     def iniciar_salvamento(self) -> None:
-        """Define o estado de conclusão ao ponto `COLETA DE DADOS`,
-        define o estado de trabalho ao ponto `SALVANDO DADOS` e
-        define o estado de negativo ao ponto `PERMITIDO FECHAR`"""
+        """Atualiza a interface para indicar o processo de persistência de dados."""
         self._pontos_de_status[4].configure(image=self._IMAGENS.PONTO_VERDE)
         self._pontos_de_status[5].configure(image=self._IMAGENS.PONTO_AZUL)
         self._pontos_de_status[9].configure(image=self._IMAGENS.PONTO_VERMELHO_GRANDE)
         self.janela.update()
 
     def finalizar_salvamento(self) -> None:
-        """Encerra o ciclo dos dados, atualiza as informações de execução,
-        define o estado de conclusão ao ponto `SALVANDO DADOS`,
-        define o estado de trabalho ao ponto `COLETA DE DADOS`,
-        define o estado de positivo ao ponto `PERMITIDO FECHAR`,
-        insere progresso à barra geral e reinicia a barra do ciclo"""
+        """
+        Atualiza as informações de execução e prepara a interface para o
+        próximo ciclo de coleta.
+        """
         self.dados_de_execucao.encerrar_ciclo()
         self._textos_variaveis[4].set(value=self.dados_de_execucao.str_paginas_salvas)
         self._pontos_de_status[5].configure(image=self._IMAGENS.PONTO_VERDE)
@@ -171,10 +174,7 @@ class InterfaceDaJanela:
         self.janela.update()
 
     def iniciar_transformacao(self) -> None:
-        """Define o estado de conclusão aos ponto `COLETA DE DADOS` e
-        `SALVANDO DADOS`, define o estado de trabalho ao ponto
-        `TRANSFORMAÇÃO DOS DADOS` e define o estado de negativo ao ponto
-        `PERMITIDO FECHAR`"""
+        """Atualiza a interface para indicar o início da transformação de dados."""
         self._pontos_de_status[4].configure(image=self._IMAGENS.PONTO_VERDE)
         self._pontos_de_status[5].configure(image=self._IMAGENS.PONTO_VERDE)
         self._pontos_de_status[6].configure(image=self._IMAGENS.PONTO_AZUL)
@@ -182,17 +182,14 @@ class InterfaceDaJanela:
         self.janela.update()
 
     def finalizar_transformacao(self) -> None:
-        """Define o estado de conclusão aos pontos `TRANSFORMAÇÃO DOS DADOS`,
-        `CONCLUSÃO` e `PERMITIDO FECHAR`"""
+        """Atualiza a interface para indicar o sucesso da transformação de dados."""
         self._pontos_de_status[6].configure(image=self._IMAGENS.PONTO_VERDE)
         self._pontos_de_status[7].configure(image=self._IMAGENS.PONTO_VERDE)
         self._pontos_de_status[9].configure(image=self._IMAGENS.PONTO_VERDE_GRANDE)
         self.janela.update()
 
     def atualizar_passo(self) -> None:
-        """Chama o método de `DadosDeExecucao` para atualizar as informações,
-        define os valores das variáveis de texto e insere progresso à barra
-        do ciclo"""
+        """Atualiza os indicadores de execução exibidos na interface."""
         self.dados_de_execucao.encerrar_coleta()
         self._textos_variaveis[0].set(
             value=self.dados_de_execucao.str_tempo_para_conclusao_geral)
@@ -213,13 +210,13 @@ class InterfaceDaJanela:
         self.janela.update()
 
     def fechar_com_seguranca(self) -> None:
-        """Informa ao usuário que a tela pode ser fechada"""
+        """Informa ao usuário que a aplicação pode ser encerrada com segurança."""
         self._textos_variaveis[11].set("A tela pode ser fechada com segurança.")
         self._mensagem_de_erro.configure(foreground="Green")
         self.janela.update()
 
-    def _alterar_permissao(self):
-        """Altera a permissão para coletar o próximo ciclo"""
+    def _alterar_permissao(self) -> None:
+        """Solicita o encerramento da coleta após o ciclo atual."""
         self.permissao_para_coletar = False
         self._textos_variaveis[11].set(
             "Após o final deste ciclo, o script irá encerrar a coleta de dados.")
@@ -228,15 +225,16 @@ class InterfaceDaJanela:
         self.janela.update()
 
     def _gerar_etiqueta(
-            self, texto="", ancora="w", fonte=('Agenda', 10, 'bold'), cor_texto="Black",
+            self, texto="", ancora: Anchor = "w", fonte=('Agenda', 10, 'bold'), cor_texto="Black",
             variavel_de_texto=None, esp_borda=None, borda=None) -> ttk.Label:
-        """Cria um objeto `tk.Label` com os parâmetros passados"""
+        """Cria e retorna uma etiqueta configurada para a interface."""
         etiqueta = ttk.Label(
             self.janela, text=texto, anchor=ancora, font=fonte, foreground=cor_texto,
             textvariable=variavel_de_texto, borderwidth=esp_borda, relief=borda)
         return etiqueta
 
     def _inicializar_cabecalho(self) -> None:
+        """Inicializa os componentes visuais do cabeçalho da janela."""
         ttk.Label(self.janela, image=self._IMAGENS.LOGO).grid(
             column=1, row=1, columnspan=4, rowspan=4)
         ttk.Label(self.janela, text='ETL - SISTEMA LEGADO', anchor=tk.CENTER,
@@ -244,6 +242,7 @@ class InterfaceDaJanela:
             column=6, row=1, columnspan=33, rowspan=4)
 
     def _inicializar_painel_de_status(self) -> None:
+        """Inicializa o painel que exibe o status das etapas da execução."""
         self._pontos_de_status[0].grid(
             column=2, row=6, sticky='nwes')
         self._pontos_de_status[1].grid(
@@ -287,6 +286,7 @@ class InterfaceDaJanela:
             column=2, row=24, columnspan=38, sticky='nwes')
 
     def _inicializar_painel_de_execucao(self) -> None:
+        """Inicializa o painel com indicadores e controles da execução."""
         self._gerar_etiqueta(texto='PROGRESSO GERAL').grid(
             column=16, row=6, columnspan=11, sticky='nwes')
         self._gerar_etiqueta(variavel_de_texto=self._textos_variaveis[0], ancora='se',
@@ -347,6 +347,7 @@ class InterfaceDaJanela:
             column=16, row=9, columnspan=23, sticky='nwes')
 
     def _configurar_janela(self) -> None:
+        """Configura as propriedades da janela principal."""
         self.janela: tk.Tk = tk.Tk()
         self.janela.title("Coleta de Páginas")
         self.janela.iconbitmap('utils/imagens/logo.ico')
@@ -356,8 +357,7 @@ class InterfaceDaJanela:
 
     # Exceções de execução
     def excecao_bd_atualizado(self) -> None:
-        """Define estado de conclusão em todos os pontos e
-        uma mensagem na caixa de erro"""
+        """Atualiza a interface quando o banco já está sincronizado."""
         self._pontos_de_status[1].configure(image=self._IMAGENS.PONTO_VERDE)
         self._pontos_de_status[4].configure(image=self._IMAGENS.PONTO_VERDE)
         self._pontos_de_status[5].configure(image=self._IMAGENS.PONTO_VERDE)
@@ -368,48 +368,42 @@ class InterfaceDaJanela:
         )
 
     def excecao_falha_acesso_db(self) -> None:
-        """Define estado de falha no ponto `ACESSO AO BANCO DE DADOS` e
-        uma mensagem na caixa de erro"""
+        """Atualiza a interface para indicar falha na conexão com o banco de dados."""
         self._pontos_de_status[0].configure(image=self._IMAGENS.PONTO_VERMELHO)
         self._textos_variaveis[11].set(
             "Erro: Falha no acesso ao banco de dados."
         )
 
     def excecao_falha_arquivo_db(self, excecao) -> None:
-        """Define estado de falha no ponto `ACESSO AO BANCO DE DADOS` e
-        uma mensagem na caixa de erro"""
+        """Atualiza a interface para indicar que o arquivo do banco de dados não foi encontrado."""
         self._pontos_de_status[0].configure(image=self._IMAGENS.PONTO_VERMELHO)
         self._textos_variaveis[11].set(
             f"Erro: Falha ao encontrar o arquivo de banco de dados: {excecao.nome_arquivo}"
         )
 
     def excecao_falha_arquivo_alvos(self) -> None:
-        """Define estado de falha no ponto `PÁGINAS IDENTIFICADAS` e
-        uma mensagem na caixa de erro"""
+        """Atualiza a interface para indicar que não foi possível localizar os alvos."""
         self._pontos_de_status[1].configure(image=self._IMAGENS.PONTO_VERMELHO)
         self._textos_variaveis[11].set(
             "Erro: Nenhum alvo encontrado na pasta de alvos."
         )
 
     def excecao_nenhum_arquivo_alvos(self) -> None:
-        """Define estado de falha no ponto `PÁGINAS IDENTIFICADAS` e
-        uma mensagem na caixa de erro"""
+        """Atualiza a interface para indicar que nenhum arquivo de alvos foi encontrado."""
         self._pontos_de_status[1].configure(image=self._IMAGENS.PONTO_VERMELHO)
         self._textos_variaveis[11].set(
             "Erro: Nenhum arquivo encontrado na pasta de alvos."
         )
 
     def excecao_sem_arquivo_alvo_valido(self) -> None:
-        """Define estado de falha no ponto `PÁGINAS IDENTIFICADAS` e
-        uma mensagem na caixa de erro"""
+        """Atualiza a interface para indicar que não há arquivos de alvos válidos."""
         self._pontos_de_status[1].configure(image=self._IMAGENS.PONTO_VERMELHO)
         self._textos_variaveis[11].set(
             "Erro: Nenhum arquivo válido encontrado na pasta de alvos."
         )
 
     def excecao_falha_login(self) -> None:
-        """Define estado de falha no ponto `ACESSO ADQUIRIDO` e
-        uma mensagem na caixa de erro"""
+        """Atualiza a interface para indicar falha durante a autenticação."""
         self._pontos_de_status[3].configure(image=self._IMAGENS.PONTO_VERMELHO)
         self._textos_variaveis[11].set(
             "Erro: Houve um erro no login, tente acessar o sistema via browser e realize logout antes "
@@ -417,25 +411,22 @@ class InterfaceDaJanela:
         )
 
     def excecao_falha_selenium(self) -> None:
-        """Define estado de falha no ponto `ACESSO ADQUIRIDO` e
-        uma mensagem na caixa de erro"""
+        """Atualiza a interface para indicar falha na sessão automatizada."""
         self._pontos_de_status[3].configure(image=self._IMAGENS.PONTO_VERMELHO)
         self._textos_variaveis[11].set(
             "Erro: A conta já tinha sido acessada no sistema, faça login via browser e realize logout"
             " antes de tentar novamente."
         )
 
-    def excecao_integridade(self, excecao) -> None:
-        """Define estado de falha no ponto `TRANSFORMAÇÃO DOS DADOS` e
-        uma mensagem na caixa de erro"""
+    def excecao_integridade(self, excecao: ErroFalhaSQL) -> None:
+        """Atualiza a interface para indicar uma falha de integridade dos dados."""
         self._pontos_de_status[6].configure(image=self._IMAGENS.PONTO_VERMELHO)
         self._textos_variaveis[11].set(
             f"Erro: Falha de integridade de dados na query: {excecao.declaracao}."
         )
 
-    def excecao_falha_desconhecida(self, excecao) -> None:
-        """Define estado de falha em todos os pontos e
-        uma mensagem na caixa de erro"""
+    def excecao_falha_desconhecida(self, excecao: Exception) -> None:
+        """Atualiza a interface para indicar uma falha inesperada."""
         self._pontos_de_status[0].configure(image=self._IMAGENS.PONTO_VERMELHO)
         self._pontos_de_status[1].configure(image=self._IMAGENS.PONTO_VERMELHO)
         self._pontos_de_status[2].configure(image=self._IMAGENS.PONTO_VERMELHO)
@@ -454,8 +445,10 @@ class InterfaceDaJanela:
 
 
 class InterfaceDeCarregamento:
-    """Exibe a janela de inicialização da aplicação durante o carregamento
-    dos componentes necessários para a execução."""
+    """
+    Exibe uma tela de inicialização enquanto os componentes da
+    aplicação são carregados.
+    """
     def __init__(self):
         self._janela: tk.Tk = tk.Tk()
         self._janela.geometry("400x100")
@@ -464,23 +457,26 @@ class InterfaceDeCarregamento:
         self._janela.rowconfigure(tuple(range(0, 2)), weight=1, uniform='a')
         ttk.Label(self._janela, text='ETL - SISTEMA LEGADO', anchor=tk.CENTER, font=('Agenda', 25, 'bold')).grid(
             column=1, row=1)
-        self._mensagem = ttk.Label(
-            self._janela, text="Inicializando roteiro ...", anchor=tk.CENTER, font=("Agenda", 11, 'bold')
+        self._mensagem: ttk.Label = ttk.Label(
+            self._janela, text="Preparando aplicação...", anchor=tk.CENTER, font=("Agenda", 11, 'bold')
         )
         self._mensagem.grid(column=1, row=2)
         self._janela.eval('tk::PlaceWindow . center')
         self._janela.update()
 
     def mensagem_imports(self):
-        self._mensagem['text'] = "Carregando bibliotecas ..."
+        """Atualiza a mensagem indicando o carregamento das bibliotecas."""
+        self._mensagem['text'] = "Carregando bibliotecas..."
         self._janela.update()
 
     def mensagem_config(self):
-        self._mensagem['text'] = "Carregando dados de `config.txt` ..."
+        """Atualiza a mensagem indicando o carregamento das configurações."""
+        self._mensagem['text'] = "Carregando configurações (config.txt)..."
         self._janela.update()
 
     def mensagem_instrucoes(self):
-        self._mensagem['text'] = "Carregando as instruções do roteiro ..."
+        """Atualiza a mensagem indicando o carregamento do roteiro da aplicação."""
+        self._mensagem['text'] = "Inicializando aplicação..."
         self._janela.update()
 
     def fechar(self):
