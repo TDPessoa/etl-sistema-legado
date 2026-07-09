@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ca33b635-f26f-44a7-ad28-fd98fff7d939" name="Changes" comment="refactor: improve main module readability">
+    <list default="true" id="ca33b635-f26f-44a7-ad28-fd98fff7d939" name="Changes" comment="refactor: sanitize Interface file">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/classes/Interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/classes/Interface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/classes/DadosDeExecucao.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/classes/DadosDeExecucao.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +98,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783603037137</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="refactor: sanitize Interface file">
+      <option name="closed" value="true" />
+      <created>1783621756624</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1783621756624</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -116,7 +124,8 @@
     <MESSAGE value="refactor: replace wildcard imports in main module" />
     <MESSAGE value="refactor: replace wildcard imports in interface module" />
     <MESSAGE value="refactor: improve main module readability" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: improve main module readability" />
+    <MESSAGE value="refactor: sanitize Interface file" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: sanitize Interface file" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
