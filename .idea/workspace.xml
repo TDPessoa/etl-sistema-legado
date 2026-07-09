@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ca33b635-f26f-44a7-ad28-fd98fff7d939" name="Changes" comment="refactor: replace wildcard imports in interface module">
-      <change beforePath="$PROJECT_DIR$/utils/funcoes.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/funcoes.py" afterDir="false" />
+    <list default="true" id="ca33b635-f26f-44a7-ad28-fd98fff7d939" name="Changes" comment="refactor: replace wildcard imports in functions module">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +28,18 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;TDPessoa&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/TDPessoa/etl-sistema-legado.git&quot;,
+    &quot;accountId&quot;: &quot;720c63b6-14ef-45a8-b900-afb7a58bc33d&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -39,10 +52,11 @@
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "feature/imports-cleanup",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+    "git-widget-placeholder": "refactor/module-review-01",
+    "settings.editor.selected.configurable": "proofread"
   }
 }]]></component>
   <component name="SharedIndexes">
