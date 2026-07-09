@@ -3,26 +3,54 @@ Funções utilitárias responsáveis pela coleta, leitura de arquivos,
 persistência em banco de dados e processamento de páginas.
 """
 
-import openpyxl
-from utils.config import *
-from utils.instrucoes_sql import *
-from utils.classes.Excecoes import *
-import pyodbc
+import datetime
 import os
 import re
+import json
+import openpyxl
+import pyodbc
 from openpyxl import load_workbook
 from bs4 import BeautifulSoup
-import datetime
 from hashlib import sha256
 from win32com.client import Dispatch
 from numpy import array
-import json
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 import requests
 from selenium import webdriver, common
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+
+from utils.config import (
+    ETIQUETAS_HTML,
+    CAMINHO_METADADOS,
+    STR_CONEXAO_ACCESS,
+    CAMINHO_ALVOS,
+    URL_PARA_LOGIN,
+    URL_DE_DADOS,
+    MAPAS,
+    ACESSO_AUTOMATICO,
+    TAMANHO_DA_TELA,
+    USUARIO,
+    SENHA,
+    CAMINHO_CHROME
+)
+from utils.instrucoes_sql import (
+    SELECAO_IDS_BANCO_DE_DADOS,
+    POPULAR_DADOS,
+    POPULAR_METADADOS,
+    NOVO_METADADOS,
+    SELECAO_IDS_METADADOS,
+    EXCLUSAO_METADADOS,
+    EXCLUSAO_DADOS
+)
+from utils.classes.Excecoes import (
+    ErroFalhaConexaoBancoDeDados,
+    ErroPastaDeAlvosVazia,
+    ErroNenhumAlvoPassado,
+    ErroNenhumArquivoValidoEmAlvos,
+    AlvosJaConstamNoBancoDeDados
+)
 
 
 def salvar_dados(conexao: pyodbc.Connection, dados: dict) -> None:
@@ -198,14 +226,14 @@ def verificar_pendencia(paginas: list, conexao: pyodbc.Connection) -> list:
         if extensao != "accdb":
             arquivos_metadados.remove(arquivo)  # Removendo se a extensão for inválida
 
-    paginas_no_banco = selecionar_ids(conexao, SELECAO_PAGINAS_BANCO_DE_DADOS)
+    paginas_no_banco = selecionar_ids(conexao, SELECAO_IDS_BANCO_DE_DADOS)
     metadados = {}
 
     if len(arquivos_metadados) > 0:  # Se ainda existir arquivos
         for arquivo in arquivos_metadados:  # Iterando sobre os arquivos de metadados e gerando conexão
             conexao_metadados = pyodbc.connect(STR_CONEXAO_ACCESS.format(CAMINHO_METADADOS + arquivo))
             paginas_nos_metadados = selecionar_ids(
-                conexao_metadados, SELECAO_PAGINAS_METADADOS)  # Consultando os ids do banco de metadados
+                conexao_metadados, SELECAO_IDS_METADADOS)  # Consultando os ids do banco de metadados
 
             for pagina in paginas_nos_metadados:
                 metadados[pagina.strip()] = arquivo

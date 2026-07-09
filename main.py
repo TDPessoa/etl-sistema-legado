@@ -3,19 +3,56 @@ Pipeline ETL para coleta e transformação de dados provenientes
 de um sistema web legado.
 """
 
-from utils.classes.Interface import *
+from utils.classes.Interface import InterfaceDeCarregamento
+
+# A splash é inicializada antes dos demais imports para fornecer feedback
+# visual imediato durante a carga inicial da aplicação.
 inicio = InterfaceDeCarregamento()
 
+# Os imports abaixo são realizados após a exibição da splash para que o
+# usuário receba feedback durante a inicialização.
+import os
+import pyodbc
+import requests
 import subprocess
 import gc
 import selenium.common.exceptions
 from time import sleep
+from utils.funcoes import (
+    raspar_conteudo,
+    coletar_alvos,
+    acessar_servico,
+    digerir_dados,
+    salvar_dados,
+    salvar_metadados
+)
+from utils.classes.Excecoes import (
+    AlvosJaConstamNoBancoDeDados,
+    ErroParametrosDeLoginNaoEncontrados,
+    ErroCaminhoDoBancoDeDadosAusente,
+    ErroArquivoBancoDeDadosNaoEncontrado,
+    ErroCaminhoChromeAusente,
+    ErroArquivoChromeInexistente,
+    ErroFalhaConexaoBancoDeDados,
+    ErroNenhumAlvoPassado,
+    ErroPastaDeAlvosVazia,
+    ErroNenhumArquivoValidoEmAlvos,
+    ErroNaoFoiPossivelRealizarOLogin,
+    ErroFalhaSQL
+)
+from utils.classes.Interface import InterfaceDaJanela
 
 
 inicio.mensagem_config()
 
-
-from utils.funcoes import *
+# As configurações são carregadas após a etapa de inicialização das dependências.
+from utils.config import (
+    ACESSO_AUTOMATICO,
+    LIMITE_DE_TAREFAS,
+    STR_CONEXAO_ACCESS,
+    CAMINHO_BANCO_DE_DADOS,
+    CAMINHO_DADOS
+)
 
 
 inicio.mensagem_instrucoes()
