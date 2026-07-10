@@ -7,6 +7,7 @@ import datetime
 import os
 import re
 import json
+
 import openpyxl
 import pyodbc
 from openpyxl import load_workbook
@@ -54,12 +55,11 @@ from utils.classes.Excecoes import (
 
 
 def salvar_dados(conexao: pyodbc.Connection, dados: dict) -> None:
-    """Utiliza de uma conexão com um arquivo `.accdb` para inserir linha a
-    linha os dados coletados"""
+    """Salva os dados coletados no banco principal."""
     chaves: list[str] = list(ETIQUETAS_HTML.keys())
     cursor: pyodbc.Cursor = conexao.cursor()
 
-    blocos_de_dados: list[str] = gerar_tuplas_de_insercao(dados, chaves)
+    blocos_de_dados: list[tuple[str]] = gerar_tuplas_de_insercao(dados, chaves)
     for bloco in blocos_de_dados:
         cursor.execute(POPULAR_DADOS.format(*bloco))
 
@@ -67,10 +67,8 @@ def salvar_dados(conexao: pyodbc.Connection, dados: dict) -> None:
     cursor.close()
 
 
-def selecionar_ids(conexao: pyodbc.Connection, declaracao: str) -> list:
-    """Utiliza de uma conexão com um arquivo `.accdb` para realizar uma
-    consulta passada por parametro, retornando como lista os primeiros itens
-    de cada linha"""
+def selecionar_ids(conexao: pyodbc.Connection, declaracao: str) -> list[str]:
+    """Retorna os identificadores obtidos por uma consulta SQL."""
     cursor: pyodbc.Cursor = conexao.cursor()
     lista_ids: list[pyodbc.Row] = cursor.execute(declaracao).fetchall()
     lista_final: list[str] = []
@@ -81,9 +79,7 @@ def selecionar_ids(conexao: pyodbc.Connection, declaracao: str) -> list:
 
 
 def salvar_metadados(metadados: dict) -> None:
-    """Recebe um dicionário com os metadados divididos por ano, se o arquivo
-    meta para o ano não existir, irá ser criado um novo, e os dados serão
-    salvos no arquivo correspondente"""
+    """Salva os metadados nos bancos correspondentes a cada ano."""
     anos: list[str] = list(metadados.keys())
     chaves: list[str] = ['id', 'data_coleta', 'sha', 'texto_html']
     for ano in anos:
@@ -103,13 +99,11 @@ def salvar_metadados(metadados: dict) -> None:
 
 
 def abrir_conexao(caminho: str, gerar_se_inexistente=False) -> pyodbc.Connection:
-    """Verifica se o arquivo existe na pasta, retorna uma conexão se o
-    arquivo existir ou cria um novo arquivo e retorna a conexão se não
-    existir"""
-    arquivo: str = str(caminho.split('\\')[-1])
-    arquivos: list[str] = os.listdir("\\".join(caminho.split('\\')[:-1]))
+    """Abre uma conexão com o banco de dados, criando-o quando necessário."""
+    nome_arquivo: str = str(caminho.split('\\')[-1])
+    nomes_arquivos: list[str] = os.listdir("\\".join(caminho.split('\\')[:-1]))
     str_conexao: str = STR_CONEXAO_ACCESS.format(caminho)
-    if arquivo in arquivos:
+    if nome_arquivo in nomes_arquivos:
         try:
             return pyodbc.connect(str_conexao)
         except pyodbc.Error:
@@ -134,29 +128,26 @@ def abrir_conexao(caminho: str, gerar_se_inexistente=False) -> pyodbc.Connection
         return conexao
 
 
-def coletar_alvos(conexao: pyodbc.Connection) -> list:
-    """Identifica todos os arquivos contidos na pasta de alvos, avalia
-    se são arquivos válidos, varre todos os arquivos procurando pela
-    expressão de um id válido e retorna uma lista de ids alvos
-    únicos."""
+def coletar_alvos(conexao: pyodbc.Connection) -> list[str]:
+    """Coleta os identificadores válidos presentes nos arquivos de alvos."""
     arquivos_na_pasta_alvo: list[str] = os.listdir(CAMINHO_ALVOS)
-    if len(arquivos_na_pasta_alvo) == 0:
+    if not arquivos_na_pasta_alvo:
         raise ErroPastaDeAlvosVazia
 
     extensoes_validas: list[str] = ['xls', 'xlsx']
     arquivos_alvo: list[str] = []
-    for arquivo in arquivos_na_pasta_alvo:
-        if arquivo.split('.')[-1] in extensoes_validas:
-            arquivos_alvo.append(arquivo)
+    for nome_arquivo in arquivos_na_pasta_alvo:
+        if nome_arquivo.split('.')[-1] in extensoes_validas:
+            arquivos_alvo.append(nome_arquivo)
 
-    if len(arquivos_alvo) == 0:
+    if not arquivos_alvo:
         raise ErroNenhumArquivoValidoEmAlvos
 
-    alvos = []
-    for arquivo in arquivos_alvo:
-        extensao = arquivo.split('.')[-1]
-        caminho_ao_arquivo = f'{CAMINHO_ALVOS}/{arquivo}'
-        alvos_encontrados = []
+    alvos: list[str] = []
+    for nome_arquivo in arquivos_alvo:
+        extensao = nome_arquivo.split('.')[-1]
+        caminho_ao_arquivo = f'{CAMINHO_ALVOS}/{nome_arquivo}'
+        alvos_encontrados: list[str] = []
         if extensao == 'xls':
             alvos_encontrados += extrair_de_xls(caminho_ao_arquivo)
         elif extensao == 'xlsx':
@@ -166,22 +157,22 @@ def coletar_alvos(conexao: pyodbc.Connection) -> list:
             if alvo not in alvos:
                 alvos.append(alvo)
 
-    if len(alvos) == 0:
+    if not alvos:
         raise ErroNenhumAlvoPassado
 
-    if type(conexao) is not str:
+    if not isinstance(conexao, str):
         alvos = verificar_pendencia(alvos, conexao)
 
-    if len(alvos) == 0:
+    if not alvos:
         raise AlvosJaConstamNoBancoDeDados
 
     return alvos
 
 
-def extrair_de_xlsx(arquivo: str) -> list[str]:
-    """Abre o arquivo com extensão `.xlsx` e retorna os dados encontrados"""
+def extrair_de_xlsx(nome_arquivo: str) -> list[str]:
+    """Extrai identificadores de páginas de um arquivo '.xlsx'."""
     extrato: list[str] = []
-    livro_alvos: openpyxl.Workbook = load_workbook(arquivo)
+    livro_alvos: openpyxl.Workbook = load_workbook(nome_arquivo)
     folha_alvos = livro_alvos.active
     for row in folha_alvos.iter_rows(1, folha_alvos.max_row):
         for col in range(len(row)):
@@ -193,10 +184,10 @@ def extrair_de_xlsx(arquivo: str) -> list[str]:
     return extrato
 
 
-def extrair_de_xls(arquivo: str) -> list[str]:
-    """Abre o arquivo com extensão `.xls` e retorna os dados encontrados"""
+def extrair_de_xls(nome_arquivo: str) -> list[str]:
+    """Extrai identificadores de páginas de um arquivo '.xls'."""
     extrato: list[str] = []
-    with open(arquivo, 'r') as dados_arquivo:
+    with open(nome_arquivo, 'r') as dados_arquivo:
         dados_xls: list[str] = ''.join(dados_arquivo.readlines()).replace("</td>", "").split("<td>")
         for dado_xls in dados_xls:
             if e_id_pagina(dado_xls):
@@ -205,47 +196,40 @@ def extrair_de_xls(arquivo: str) -> list[str]:
 
 
 def e_id_pagina(possivel_id: str) -> bool:
-    """Retorna se o texto passado segue a expressão regular que define um
-    id de página"""
+    """Retorna se o texto corresponde a um identificador de página."""
     return bool(re.match('^[0-9]{8}$', possivel_id))
 
 
-def verificar_pendencia(paginas: list, conexao: pyodbc.Connection) -> list:
-    """Compara os identificadores informados com os registros
-    existentes no banco principal e nos bancos de metadados.
-    Também identifica inconsistências entre ambos os armazenamentos,
-    removendo registros órfãos quando necessário.
-    Retorna apenas as páginas que ainda precisam ser processadas."""
-    paginas_pedentes = []
-    paginas_para_excluir_do_banco = []
-    paginas_para_excluir_do_metadados = {}
+def verificar_pendencia(paginas: list[str], conexao: pyodbc.Connection) -> list[str]:
+    """Remove inconsistências e retorna as páginas ainda pendentes."""
+    paginas_pendentes: list[str] = []
+    paginas_para_excluir_do_banco: list[str] = []
+    paginas_para_excluir_do_metadados: dict[str, list[str]] = {}
 
-    arquivos_metadados = os.listdir(CAMINHO_METADADOS)  # Identificando os arquivos de metadados
-    for arquivo in arquivos_metadados:  # Iterando sobre os nomes e verificando se a extensão é válida
-        extensao = arquivo.split('.')[-1]
+    arquivos_metadados = os.listdir(CAMINHO_METADADOS)
+    for nome_arquivo in arquivos_metadados:
+        extensao = nome_arquivo.split('.')[-1]
         if extensao != "accdb":
-            arquivos_metadados.remove(arquivo)  # Removendo se a extensão for inválida
+            arquivos_metadados.remove(nome_arquivo)
 
     paginas_no_banco = selecionar_ids(conexao, SELECAO_IDS_BANCO_DE_DADOS)
-    metadados = {}
+    metadados: dict[str, str] = {}
 
-    if len(arquivos_metadados) > 0:  # Se ainda existir arquivos
-        for arquivo in arquivos_metadados:  # Iterando sobre os arquivos de metadados e gerando conexão
-            conexao_metadados = pyodbc.connect(STR_CONEXAO_ACCESS.format(CAMINHO_METADADOS + arquivo))
-            paginas_nos_metadados = selecionar_ids(
-                conexao_metadados, SELECAO_IDS_METADADOS)  # Consultando os ids do banco de metadados
+    if arquivos_metadados:
+        for nome_arquivo in arquivos_metadados:
+            conexao_metadados = pyodbc.connect(STR_CONEXAO_ACCESS.format(CAMINHO_METADADOS + nome_arquivo))
+            paginas_nos_metadados = selecionar_ids(conexao_metadados, SELECAO_IDS_METADADOS)
 
             for pagina in paginas_nos_metadados:
-                metadados[pagina.strip()] = arquivo
+                metadados[pagina.strip()] = nome_arquivo
 
             conexao_metadados.close()
 
-    for pagina in paginas:  # Iterando sobre as páginas e removendo os ids que estiverem no
-        # banco de metadados
+    for pagina in paginas:
         pagina_esta_no_banco = pagina in paginas_no_banco
-        pagina_esta_nos_metadados = pagina in list(metadados.keys())
+        pagina_esta_nos_metadados = pagina in metadados
         if (not pagina_esta_no_banco) and (not pagina_esta_nos_metadados):
-            paginas_pedentes.append(pagina)
+            paginas_pendentes.append(pagina)
 
         else:
             if pagina_esta_no_banco and (not pagina_esta_nos_metadados):
@@ -260,31 +244,32 @@ def verificar_pendencia(paginas: list, conexao: pyodbc.Connection) -> list:
     excluir_do_banco(paginas_para_excluir_do_banco, conexao)
     excluir_dos_metadados(paginas_para_excluir_do_metadados)
 
-    return paginas_pedentes
+    return paginas_pendentes
 
 
-def excluir_do_banco(paginas: list, conexao: pyodbc.Connection) -> None:
+def excluir_do_banco(paginas: list[str], conexao: pyodbc.Connection) -> None:
+    """Remove as páginas informadas do banco de dados principal."""
     cursor = conexao.cursor()
     for pagina in paginas:
         cursor.execute(EXCLUSAO_DADOS.format(pagina))
 
 
-def excluir_dos_metadados(metadados: dict) -> None:
-    for arquivo in metadados:
-        conexao_metadados = pyodbc.connect(STR_CONEXAO_ACCESS.format(CAMINHO_METADADOS + arquivo))
+def excluir_dos_metadados(metadados: dict[str, list[str]]) -> None:
+    """Remove páginas dos respectivos bancos de metadados."""
+    for nome_arquivo in metadados:
+        conexao_metadados = pyodbc.connect(STR_CONEXAO_ACCESS.format(CAMINHO_METADADOS + nome_arquivo))
         cursor = conexao_metadados.cursor()
-        for pagina in metadados[arquivo]:
+        for pagina in metadados[nome_arquivo]:
             cursor.execute(EXCLUSAO_METADADOS.format(pagina))
 
 
-def transformar_em_url(id: str) -> str:
+def transformar_em_url(_id: str) -> str:
     """Gera a URL de acesso para uma página a partir de seu identificador."""
-    return URL_DE_DADOS.format(id)
+    return URL_DE_DADOS.format(_id)
 
 
-def digerir_dados(grupo_de_paginas: list) -> tuple:
-    """Percorre a lista contendo códigos html e chama a função
-    `extrair_dados` em cada uma para estruturar de forma tabular"""
+def digerir_dados(grupo_de_paginas: list[str]) -> tuple[dict, dict]:
+    """Extrai dados e metadados de um conjunto de páginas HTML."""
     dicionario_estruturado, metadados_estruturados = {}, {}
     for pagina in grupo_de_paginas:
         pagina = pagina.replace('', '[err_char]')
@@ -301,7 +286,7 @@ def digerir_dados(grupo_de_paginas: list) -> tuple:
 
 
 def extrair_metadados(dados: dict, pagina: str, metadados: dict) -> dict:
-    """"""
+    """Adiciona os metadados de uma página à estrutura correspondente."""
     chaves = ['id', 'data_coleta', 'sha', 'texto_html']
     ano = dados['lblDataCriacao'][-1][-4:]
     pagina_limpa = pagina.replace("'", '*a*')
@@ -312,27 +297,22 @@ def extrair_metadados(dados: dict, pagina: str, metadados: dict) -> dict:
         sha256(str(pagina).encode()).hexdigest(),
         pagina_limpa
     ]
-    if ano not in list(metadados.keys()):
+    if ano not in metadados:
         metadados[ano] = {}
 
-    for c in range(len(chaves)):
-        chave = chaves[c]
+    for indice in range(len(chaves)):
+        chave = chaves[indice]
         try:
-            metadados[ano][chave].append(valores[c])
+            metadados[ano][chave].append(valores[indice])
 
         except KeyError:
-            metadados[ano][chave] = [valores[c]]
+            metadados[ano][chave] = [valores[indice]]
 
     return metadados
 
 
 def extrair_dados(html: str, valores: dict) -> dict:
-    """Percorre o dicionário de etiquetas html e extrai, da forma
-    específicada, cada informação desejada.
-    :param html: Objeto `BeautifulSoup` com o código html extraído da
-    página
-    :param valores: Dicionário tratado para armazenar os dados
-    tabulares"""
+    """Extrai os dados definidos em ETIQUETAS_HTML de uma página HTML."""
     sopa = BeautifulSoup(html, 'html.parser')
     mapas = gerar_mapas()
     for etiqueta in ETIQUETAS_HTML.keys():
@@ -396,7 +376,6 @@ def extrair_dados(html: str, valores: dict) -> dict:
             pass
 
         try:
-            # Acrescentando o valor à lista.
             valores[etiqueta].append(valor)
         except KeyError:
             # Gerando nova lista caso não tenha sido gerada ainda.
@@ -405,41 +384,36 @@ def extrair_dados(html: str, valores: dict) -> dict:
     return valores
 
 
-def gerar_tuplas_de_insercao(dados: dict, estrutura: list) -> list:
-    linhas = []
-    for c in range(len(dados[estrutura[0]])):
+def gerar_tuplas_de_insercao(dados: dict, estrutura: list) -> list[tuple[str]]:
+    """Converte um dicionário de colunas em linhas para inserção no banco."""
+    quantidade_registros = len(dados[estrutura[0]])
+    linhas: list[tuple[str]] = []
+    for indice in range(quantidade_registros):
         linha = []
         for chave in estrutura:
-            linha.append(dados[chave][c])
+            linha.append(dados[chave][indice])
 
-        linhas.append(linha)
+        linhas.append(tuple(linha))
 
     return linhas
 
 
-def verificar_insercao(atual: str, coords: Point, mapa: dict) -> str:
+def verificar_insercao(valor_atual: str, coords: Point, mapa: dict) -> str:
+    """Retorna os polígonos do mapa que contêm as coordenadas informadas."""
     novo_valor = ""
     for poligono in mapa:
         if mapa[poligono].contains(coords):
             novo_valor += f'{poligono},'
 
-    if novo_valor == "":
-        return f'{atual}F.A.A.,'
+    if not novo_valor:
+        return f'{valor_atual}F.A.A.,'
 
-    return f'{atual}{novo_valor}'
+    return f'{valor_atual}{novo_valor}'
 
 
-def gerar_mapas() -> dict:
-    """Retorna um dicionário aninhado, no formato:
-    {
-        nome_do_mapa: {
-            [
-                nome_poligono1: Polygon(coords1),
-                nome_poligono2: Polygon(coords2), ...
-                ]
-            }
-        }"""
-    mapas = {}
+def gerar_mapas() -> dict[str, dict[str, Polygon]]:
+    """Carrega os mapas configurados e suas geometrias em memória."""
+    mapas: dict[str, dict[str, Polygon]] = {}
     for _mapa in MAPAS:
         with open(MAPAS[_mapa], 'r', encoding='utf-8') as file:
             file_data = ""
@@ -463,15 +437,14 @@ def gerar_mapas() -> dict:
     return mapas
 
 
-def raspar_conteudo(id: str, _sessao: requests.Session, _ck: dict) -> str:
-    url = transformar_em_url(id)
+def raspar_conteudo(_id: str, _sessao: requests.Session, _ck: dict[str, str]) -> str:
+    """Obtém o conteúdo HTML de uma página."""
+    url = transformar_em_url(_id)
     return _sessao.get(url, cookies=_ck).text
 
 
-def acessar_servico() -> dict:
-    """Realiza login no site, se `config.ACESSO_AUTOMATICO` for
-    verdadeiro, tenta login com as informações passadas em `USUARIO` e
-    `SENHA`, caso contrário, abre uma tela com o site de login."""
+def acessar_servico() -> dict[str, str]:
+    """Realiza a autenticação e retorna os cookies da sessão."""
     opcoes_chrome = Options()
     if ACESSO_AUTOMATICO:
         opcoes_chrome.add_argument("--headless")
@@ -487,8 +460,8 @@ def acessar_servico() -> dict:
         driver.find_element(By.XPATH, '//*[@id="txtSenha"]').send_keys(SENHA)
         driver.find_element(By.XPATH, '//*[@id="btnLogin"]').click()
 
-    cookies = {}
-    while len(cookies) == 0:
+    cookies: dict[str, str] = {}
+    while not cookies:
         try:
             cookies_do_driver = driver.get_cookies()
             if not cookies_do_driver or len(cookies_do_driver) < 10:
