@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ca33b635-f26f-44a7-ad28-fd98fff7d939" name="Changes" comment="refactor: sanitize Interface file">
+    <list default="true" id="ca33b635-f26f-44a7-ad28-fd98fff7d939" name="Changes" comment="refactor: improve readability in config and instrucoes_sql modules">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/classes/DadosDeExecucao.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/classes/DadosDeExecucao.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,17 +48,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "refactor/module-review-01",
-    "settings.editor.selected.configurable": "proofread"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;refactor/module-review-01&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;proofread&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -106,7 +106,31 @@
       <option name="project" value="LOCAL" />
       <updated>1783621756624</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="refactor: improve DadosDeExecucao.py readability">
+      <option name="closed" value="true" />
+      <created>1783623831081</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1783623831081</updated>
+    </task>
+    <task id="LOCAL-00006" summary="refactor: improve readability in funcoes module">
+      <option name="closed" value="true" />
+      <created>1783714028057</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1783714028057</updated>
+    </task>
+    <task id="LOCAL-00007" summary="refactor: improve readability in config and instrucoes_sql modules">
+      <option name="closed" value="true" />
+      <created>1783770682262</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1783770682262</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -125,7 +149,10 @@
     <MESSAGE value="refactor: replace wildcard imports in interface module" />
     <MESSAGE value="refactor: improve main module readability" />
     <MESSAGE value="refactor: sanitize Interface file" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: sanitize Interface file" />
+    <MESSAGE value="refactor: improve DadosDeExecucao.py readability" />
+    <MESSAGE value="refactor: improve readability in funcoes module" />
+    <MESSAGE value="refactor: improve readability in config and instrucoes_sql modules" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: improve readability in config and instrucoes_sql modules" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
