@@ -1,6 +1,6 @@
 """
 Pipeline ETL para coleta e transformação de dados provenientes
-de um sistema web legado.
+de um sistema web-legado.
 """
 
 from utils.classes.Interface import InterfaceDeCarregamento
@@ -59,6 +59,11 @@ inicio.mensagem_instrucoes()
 
 
 class Aplicativo:
+    """
+    Coordena o fluxo principal do pipeline ETL,
+    incluindo as etapas de coleta, persistência e
+    transformação dos dados.
+    """
     def __init__(self):
         self._interface: InterfaceDaJanela = InterfaceDaJanela()
         self._conexao: None | pyodbc.Connection = None
@@ -66,7 +71,7 @@ class Aplicativo:
         self._cookies: None | dict = None
         self._coleta: list = []
         self._sessao: requests.Session = requests.session()
-        self._interface.janela.after(100, self._roteiro_principal)
+        self._interface.janela.after(100, self._iniciar_execucao)
         self._interface.janela.mainloop()
 
     @property
@@ -77,7 +82,8 @@ class Aplicativo:
     def _alcance_loop(self) -> range:
         return range(self._quantidade_paginas)
 
-    def _execucao(self) -> None:
+    def _executar_pipeline(self) -> None:
+        """Executa o fluxo principal do pipeline ETL."""
         self._interface.automatizado(ACESSO_AUTOMATICO)
         self._acessar_banco()
         self._identificar_paginas()
@@ -101,9 +107,10 @@ class Aplicativo:
         self._sessao.close()
         self._interface.janela.quit()
 
-    def _roteiro_principal(self) -> None:
+    def _iniciar_execucao(self) -> None:
+        """Inicia a execução da aplicação e trata exceções do processo."""
         try:
-            self._execucao()
+            self._executar_pipeline()
         # Exceções Boas:
         except AlvosJaConstamNoBancoDeDados:
             self._interface.excecao_bd_atualizado()
@@ -142,9 +149,12 @@ class Aplicativo:
             self._interface.excecao_falha_desconhecida(e)
 
         finally:
+            # Garante a atualização da ‘interface’ antes do encerramento
+            # do ciclo de execução.
             self._interface.janela.update()
 
     def _acessar_banco(self) -> None:
+        """Estabelece a conexão com o banco de dados da aplicação."""
         self._interface.iniciar_conexao()
 
         str_conexao: str = STR_CONEXAO_ACCESS.format(CAMINHO_BANCO_DE_DADOS)
@@ -154,16 +164,19 @@ class Aplicativo:
         self._interface.finalizar_conexao()
 
     def _identificar_paginas(self) -> None:
+        """Obtém as páginas que serão processadas durante a coleta."""
         self._interface.iniciar_identificacao()
         self._paginas = coletar_alvos(self._conexao)
         self._interface.finalizar_identificacao(self._quantidade_paginas)
 
     def _realizar_acesso(self) -> None:
+        """Realiza a autenticação no sistema e obtém a sessão de acesso."""
         self._interface.iniciar_login()
         self._cookies = acessar_servico()
         self._interface.finalizar_login()
 
     def _salvar_coleta(self) -> None:
+        """Persiste os dados coletados no ciclo atual da execução."""
         self._interface.iniciar_salvamento()
         dados_coletados, metadados_coleta = digerir_dados(self._coleta)
         salvar_dados(self._conexao, dados_coletados)
@@ -172,6 +185,7 @@ class Aplicativo:
         self._interface.finalizar_salvamento()
 
     def _transformar_dados_no_banco(self) -> None:
+        """Executa a etapa de transformação dos dados persistidos."""
         self._interface.iniciar_transformacao()
 
         with open(f'{CAMINHO_DADOS}/permissao.txt', 'w') as _:

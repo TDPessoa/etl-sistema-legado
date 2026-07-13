@@ -1,13 +1,13 @@
 """
-Leitura e interpretação do arquivo de configuração da aplicação.
+Carrega e interpreta as configurações definidas em `config.txt`.
 
-Dicionário de caractéres:
-    Descrição                                   Combinação
-    Retorno (Enter/Carriage Left)               %CRLF%
-    Tab Space (ou quatro espaços em branco)     %TBSP%
-    Ponto e vírgula (Semi-colon)                %SC%
-    Dois pontos (Colon)                         %CL%
-    Definição de variável                       %V%[nome_da_variavel]%/V%
+Marcadores utilizados no arquivo de configuração:
+
+    %CRLF%  -> quebra de linha
+    %TBSP%  -> indentação
+    %SC%    -> ponto e vírgula
+    %CL%    -> dois pontos
+    %V%...%/V% -> referência a outra variável
 """
 
 import pathlib
@@ -18,13 +18,13 @@ _dicionario: dict = {
 
 CAMINHO_PRINCIPAL: str = _dicionario['CAMINHO_PRINCIPAL']
 
-with open(f'{CAMINHO_PRINCIPAL}/config.txt', 'r', encoding='utf-8') as file:
-    linhas: list = file.readlines()
+with open(f'{CAMINHO_PRINCIPAL}/config.txt', 'r', encoding='utf-8') as arquivo_config:
+    linhas: list[str] = arquivo_config.readlines()
     texto: str = ""
     for linha in linhas:
         if linha != '\n':
             texto += linha.replace('\n', '%CRLF%').replace('    ', '%TBSP%').strip()
-    lista_texto: list = texto.split(';')
+    lista_texto: list[str] = texto.split(';')
     for constante in lista_texto:
         chave: str = constante.split(':')[0].replace('%CRLF%', '')
         if constante.count(': {') == 0:
@@ -37,7 +37,7 @@ with open(f'{CAMINHO_PRINCIPAL}/config.txt', 'r', encoding='utf-8') as file:
                 novo_valor: str = ''
                 for variavel in valor.split('%/V%'):
                     if '%V%' in variavel:
-                        partes: list = variavel.split('%V%')
+                        partes: list[str] = variavel.split('%V%')
                         nome_variavel: str = partes[1]
                         if partes[0] != '':
                             novo_valor += str(partes[0])
@@ -52,7 +52,7 @@ with open(f'{CAMINHO_PRINCIPAL}/config.txt', 'r', encoding='utf-8') as file:
                 '%SC%', ';').replace(
                 '{', '').replace(
                 '}', '')
-            sub_dados: list = valores.split('%CRLF%%TBSP%')
+            sub_dados: list[str] = valores.split('%CRLF%%TBSP%')
             sub_dicionario: dict = {}
             for dado in sub_dados:
                 if len(dado) > 1:

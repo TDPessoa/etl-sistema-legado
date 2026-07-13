@@ -1,10 +1,10 @@
 # ETL para Extração de Dados de Sistema Legado
 
-Pipeline ETL desenvolvido em Python para automatizar a coleta de dados de um sistema legado utilizado em ambiente operacional.
+Aplicação desktop desenvolvida em Python para automatizar a extração, transformação e persistência de dados provenientes de um sistema legado.
 
 O projeto surgiu da necessidade de substituir um processo manual que consumia horas de trabalho e ainda limitava o acesso às informações disponíveis na plataforma. A solução automatiza autenticação, navegação, extração, tratamento e persistência dos dados, permitindo a construção de bases completas para análises operacionais e geração de indicadores.
 
-> **Situação atual:** este repositório representa a versão em processo de refatoração para publicação. O sistema encontra-se funcional e utilizado em ambiente real, enquanto a estrutura do código, documentação e organização estão sendo gradualmente adaptadas para disponibilização pública.
+*Situação atual*: este repositório contém a versão base publicada do projeto, atualmente em evolução incremental. As refatorações, melhorias de arquitetura e documentação são registradas ao longo do histórico de commits, preservando a lógica utilizada em produção.
 
 ---
 
@@ -70,20 +70,19 @@ Base de dados estruturada
 
 ---
 
-## Tecnologias
+## Tecnologias e conceitos
 
-- Linguagem
-  - Python
-- Automação
-  - Selenium
-  - Requests
-  - BeautifulSoup
-- Processamento
-  - Pandas
-- Persistência
-  - PyODBC
-- Interface
-  - Tkinter
+- Python
+- ETL
+- Selenium
+- Requests
+- BeautifulSoup
+- Pandas
+- PyODBC
+- Tkinter
+- SQL
+- Web Scraping
+- Automação Desktop
 ---
 
 ## Estrutura do projeto
@@ -117,17 +116,26 @@ etl-sistema-legado/
 
 ## Próximas melhorias
 
-- [ ] Reorganização da arquitetura do projeto
-- [ ] Separação em módulos independentes
-- [ ] Configuração via arquivo `.env`
+### Arquitetura
+
+- [ ] Reorganizar responsabilidades entre módulos
+- [ ] Melhorar a estrutura do projeto
+- [ ] Centralizar configurações em `.env`
+
+### Qualidade
+
 - [ ] Logging estruturado
 - [ ] Testes automatizados
-- [ ] Documentação completa
-- [ ] Diagramas da arquitetura
-- [ ] Publicação de exemplos de execução
+- [ ] Cobertura de tipos
+- [ ] Revisão incremental de código
 
+### Documentação
+
+- [ ] Diagramas da arquitetura
+- [ ] Documentação técnica
+- [ ] Exemplos de execução
 ---
 
 ## Objetivo deste repositório
 
-Além de documentar um desenvolvido para resolver uma necessidade operacional real, este repositório registra a evolução da sua refatoração para um padrão mais próximo de projetos profissionais de software, preservando a lógica construída durante sua utilização em ambiente real.
+Além de documentar um projeto desenvolvido para resolver uma necessidade operacional real, este repositório registra a evolução da sua refatoração para um padrão mais próximo de projetos profissionais de software, preservando a lógica construída durante sua utilização em ambiente real.
