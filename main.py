@@ -20,9 +20,11 @@ import selenium.common.exceptions
 from time import sleep
 from utils.funcoes import (
     raspar_conteudo,
-    coletar_alvos,
-    acessar_servico,
-    digerir_dados,
+    coletar_alvos
+)
+from utils.extraction.authentication import acessar_servico
+from utils.extraction.html import digerir_dados
+from utils.persistence.access import (
     salvar_dados,
     salvar_metadados
 )
@@ -66,9 +68,9 @@ class Aplicativo:
     """
     def __init__(self):
         self._interface: InterfaceDaJanela = InterfaceDaJanela()
-        self._conexao: None | pyodbc.Connection = None
-        self._paginas: None | list = None
-        self._cookies: None | dict = None
+        self._conexao: pyodbc.Connection
+        self._paginas: list
+        self._cookies: dict
         self._coleta: list = []
         self._sessao: requests.Session = requests.session()
         self._interface.janela.after(100, self._iniciar_execucao)

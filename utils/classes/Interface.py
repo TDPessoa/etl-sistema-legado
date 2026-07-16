@@ -11,6 +11,8 @@ import tkinter as tk
 from typing import Literal
 from tkinter import ttk
 from PIL import Image, ImageTk
+from PIL.ImageFile import ImageFile
+
 from utils.classes.DadosDeExecucao import DadosDeExecucao
 from utils.classes.Excecoes import ErroFalhaSQL
 
@@ -45,7 +47,7 @@ class Imagens:
     @staticmethod
     def _condicionar_imagem(caminho: str, tamanho: int) -> ImageTk.PhotoImage:
         """Carrega, redimensiona e converte uma imagem para uso na interface."""
-        imagem: Image = Image.open(caminho)
+        imagem: ImageFile = Image.open(caminho)
         pixels_x, pixels_y = tuple([int(tamanho / imagem.size[0] * x) for x in imagem.size])
         return ImageTk.PhotoImage(imagem.resize((pixels_x, pixels_y)))
 
@@ -95,7 +97,7 @@ class InterfaceDaJanela:
         self._inicializar_cabecalho()
         self._inicializar_painel_de_status()
         self._inicializar_painel_de_execucao()
-        self.dados_de_execucao: None | DadosDeExecucao = None
+        self.dados_de_execucao: DadosDeExecucao
         self.permissao_para_coletar: bool = True
 
     def automatizado(self, permissao: bool) -> None:
@@ -237,7 +239,7 @@ class InterfaceDaJanela:
         """Inicializa os componentes visuais do cabeçalho da janela."""
         ttk.Label(self.janela, image=self._IMAGENS.LOGO).grid(
             column=1, row=1, columnspan=4, rowspan=4)
-        ttk.Label(self.janela, text='ETL - SISTEMA LEGADO', anchor=tk.CENTER,
+        ttk.Label(self.janela, text='ETL - SISTEMA LEGADO', anchor="center",
                   font=('Agenda', 40, 'bold')).grid(
             column=6, row=1, columnspan=33, rowspan=4)
 
@@ -455,10 +457,10 @@ class InterfaceDeCarregamento:
         self._janela.overrideredirect(True)
         self._janela.columnconfigure(tuple(range(0, 1)), weight=1, uniform='a')
         self._janela.rowconfigure(tuple(range(0, 2)), weight=1, uniform='a')
-        ttk.Label(self._janela, text='ETL - SISTEMA LEGADO', anchor=tk.CENTER, font=('Agenda', 25, 'bold')).grid(
+        ttk.Label(self._janela, text='ETL - SISTEMA LEGADO', anchor="center", font=('Agenda', 25, 'bold')).grid(
             column=1, row=1)
         self._mensagem: ttk.Label = ttk.Label(
-            self._janela, text="Preparando aplicação...", anchor=tk.CENTER, font=("Agenda", 11, 'bold')
+            self._janela, text="Preparando aplicação...", anchor="center", font=("Agenda", 11, 'bold')
         )
         self._mensagem.grid(column=1, row=2)
         self._janela.eval('tk::PlaceWindow . center')
