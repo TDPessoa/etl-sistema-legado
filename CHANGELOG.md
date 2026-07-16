@@ -12,11 +12,28 @@ O projeto segue uma convenção inspirada em *Keep a Changelog* e utiliza *Conve
 
 ### Planned
 
-* Organização dos artefatos de apoio ao repositório.
-* Inclusão de documentação complementar.
-* Preparação do projeto para futuras GitHub Releases.
+* Modernização da arquitetura da aplicação.
+* Evolução do mecanismo de extração.
+* Revisão do modelo de persistência.
+* Aprimoramento do sistema de configuração.
 
-> Esta etapa representa a consolidação da série **1.x**, preparando o repositório para a modernização arquitetural prevista para a versão **2.0**.
+> Esta etapa representa a próxima grande evolução do projeto, prevista para a versão **2.0**.
+
+---
+
+## [1.5.0] - 2026-07-16
+
+### Added
+
+* Inclusão do arquivo `CHANGELOG.md` para registro da evolução pública do projeto.
+* Inclusão do arquivo `ROADMAP.md` para documentar a direção planejada do projeto.
+* Inclusão da licença MIT para distribuição do repositório.
+
+### Changed
+
+* Atualizada a documentação principal do projeto.
+* Atualizada a estrutura documentada do repositório conforme a organização atual dos módulos.
+* Adicionadas referências aos documentos complementares (`CHANGELOG`, `ROADMAP` e `LICENSE`).
 
 ---
 
@@ -80,9 +97,10 @@ O projeto segue uma convenção inspirada em *Keep a Changelog* e utiliza *Conve
 * Inclusão do `README.md` com a documentação inicial.
 * Estrutura inicial do repositório disponibilizada para acompanhamento da evolução do projeto.
 
+---
 
 ## Convenções
 
-- Versionamento: Semantic Versioning (SemVer)
-- Histórico de commits: Conventional Commits
-- Estrutura do changelog inspirada em Keep a Changelog
+* Versionamento: Semantic Versioning (SemVer)
+* Histórico de commits: Conventional Commits
+* Estrutura do changelog inspirada em *Keep a Changelog*
