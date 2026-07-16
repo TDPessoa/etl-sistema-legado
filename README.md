@@ -4,7 +4,14 @@ Aplicação desktop desenvolvida em Python para automatizar a extração, transf
 
 O projeto surgiu da necessidade de substituir um processo manual que consumia horas de trabalho e ainda limitava o acesso às informações disponíveis na plataforma. A solução automatiza autenticação, navegação, extração, tratamento e persistência dos dados, permitindo a construção de bases completas para análises operacionais e geração de indicadores.
 
-*Situação atual*: este repositório contém a versão base publicada do projeto, atualmente em evolução incremental. As refatorações, melhorias de arquitetura e documentação são registradas ao longo do histórico de commits, preservando a lógica utilizada em produção.
+*Situação atual*: este repositório contém a versão pública do projeto, atualmente em evolução incremental. As alterações, melhorias arquiteturais e decisões de organização são registradas através do histórico de commits, Pull Requests e documentação complementar.
+
+
+## Documentação
+
+- [CHANGELOG](CHANGELOG.md) — histórico das alterações realizadas no projeto.
+- [ROADMAP](ROADMAP.md) — objetivos e direção planejada para evolução do projeto.
+- [LICENSE](LICENSE) — termos de utilização e distribuição.
 
 ---
 
@@ -31,7 +38,7 @@ Foi desenvolvido um pipeline ETL responsável por:
 - coletar informações indisponíveis na exportação nativa;
 - tratar inconsistências encontradas durante a coleta;
 - persistir os dados em banco de dados;
-- acompanhar toda a execução através de uma interface de monitoramento.
+- acompanhar a execução por meio de uma interface de monitoramento.
 
 O projeto também implementa mecanismos para retomada da execução, tratamento de exceções e controle do progresso da coleta.
 
@@ -89,53 +96,42 @@ Base de dados estruturada
 ```
 etl-sistema-legado/
 │
-├── main.py                  # Ponto de entrada da aplicação
+├── extraction/              # Recursos relacionados à autenticação e extração
+├── geospatial/              # Recursos de processamento espacial
+├── persistence/             # Comunicação com estruturas de dados
+├── transformation/          # Tratamento e transformação dos dados
 │
 ├── utils/
-│   ├── chrome/             # Dependências do navegador para automação
-│   ├── classes/            # Classes auxiliares da aplicação
-│   ├── imagens/            # Recursos utilizados pela interface
-│   ├── poligonos/          # Arquivos GIS utilizados na identificação espacial
-│   ├── config.py           # Configurações internas
-│   ├── funcoes.py          # Funções auxiliares
-│   └── instrucoes_sql.py   # Consultas SQL utilizadas pela aplicação
+│   ├── classes/             # Classes auxiliares
+│   ├── config.py            # Configurações internas
+│   └── instrucoes_sql.py    # Consultas SQL utilizadas pela aplicação
 │
 ├── dados/
-│   ├── alvos/              # Arquivos de referência utilizados durante a coleta
-│   ├── metadados/          # Dados brutos coletados
-│   └── dados.accdb         # Banco de dados da aplicação
 │
-├── config.txt              # Configuração da execução
-│
-└── README.md
+├── config.txt
+├── main.py
+├── README.md
+├── CHANGELOG.md
+├── ROADMAP.md
+└── LICENSE
 ```
 
-*A estrutura será atualizada conforme a refatoração evoluir.*
+*A estrutura apresentada representa a organização atual do projeto e poderá evoluir conforme as próximas etapas de desenvolvimento.*
 
 ---
 
-## Próximas melhorias
+## Próximos passos
 
-### Arquitetura
+As próximas etapas de evolução do projeto estão descritas no arquivo [ROADMAP](ROADMAP.md).
 
-- [ ] Reorganizar responsabilidades entre módulos
-- [ ] Melhorar a estrutura do projeto
-- [ ] Centralizar configurações em `.env`
-
-### Qualidade
-
-- [ ] Logging estruturado
-- [ ] Testes automatizados
-- [ ] Cobertura de tipos
-- [ ] Revisão incremental de código
-
-### Documentação
-
-- [ ] Diagramas da arquitetura
-- [ ] Documentação técnica
-- [ ] Exemplos de execução
 ---
 
 ## Objetivo deste repositório
 
 Além de documentar um projeto desenvolvido para resolver uma necessidade operacional real, este repositório registra a evolução da sua refatoração para um padrão mais próximo de projetos profissionais de software, preservando a lógica construída durante sua utilização em ambiente real.
+
+---
+
+## Licença
+
+Este projeto está licenciado sob os termos da licença MIT. Consulte o arquivo [LICENSE](LICENSE) para mais informações.
